@@ -172,6 +172,30 @@ const rerun = await unmeshedClient.reRun(processData.processId);
 console.log("Output of the rerun action ", rerun);
 ```
 
+### Search a     Process
+
+```typescript
+
+const searchParams = {
+  startTimeEpoch: 1737091430310, // Start time in epoch milliseconds
+  endTimeEpoch: 0, // End time in epoch milliseconds (0 indicates no end time, Optional)
+  namespace: "default", // Namespace for the search, (Optional)
+  processTypes: [ProcessType.STANDARD], // Array of process types to filter by, (Optional)
+  triggerTypes: [ProcessTriggerType.MANUAL], // Array of trigger types to filter by, (Optional)
+  names: ["new_worker"], // Array of process names to search for, (Optional)
+  processIds: [3200041], // Array of process IDs to filter by, (Optional)
+  correlationIds: [""], // Array of correlation IDs, (Optional)
+  requestIds: ["34f1fc6c-a08e-4feb-82be-7d4b329f484b"], // Array of request IDs to filter by, (Optional)
+  statuses: [ProcessStatus.COMPLETED], // Array of process statuses to filter by, (Optional)
+  limit: 10, // Maximum number of results to return, (Optional)
+  offset: 0, // Offset for pagination, (Optional)
+};
+
+const response = await unmeshedClient.searchProcessExecution(searchParams);
+console.log(response);
+
+```
+
 ---
 
 ## Other Example Applications
