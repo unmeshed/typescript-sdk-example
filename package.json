@@ -11,7 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@unmeshed/sdk": "1.1.1"
+    "@unmeshed/sdk": "^1.1.5"
   },
   "devDependencies": {
     "typescript": "^5.7.3"
