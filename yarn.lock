@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@unmeshed/sdk@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@unmeshed/sdk/-/sdk-1.1.1.tgz#5fcc16ef56ed3a094c54e565b0a679976181190a"
-  integrity sha512-jxjU2DvJVBtXVX/CjlvnhpEuuFGz2lG9Xy4qWoC5stL//ZBgZ4Dnd97v5Xnu9Q8ooJgbev8EexPduDYca7Uc6w==
+"@unmeshed/sdk@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.npmjs.org/@unmeshed/sdk/-/sdk-1.1.5.tgz"
+  integrity sha512-eHZviy9LIKYzOpvQOvuqlmT+dmZ4T2E50KRDIzPsk6eSGccuLRn5wD2+MmRKJ2Iun07AgjM4CE5OcOIPruODqQ==
   dependencies:
     axios "^1.7.9"
 
