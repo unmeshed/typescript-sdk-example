@@ -8,14 +8,22 @@ TypeScript. Read more about Unmeshed on [https://unmeshed.io/](https://unmeshed.
 ## About Unmeshed
 
 Unmeshed is a ⚡ fast, low-latency orchestration platform that helps you build 🛠️, run 🏃, and scale 📈 API and
-microservices orchestration, scheduled jobs ⏰, and more with ease. Learn more on
-our [🌍 main website](https://unmeshed.io) or explore
-the [📖 documentation overview](https://unmeshed.io/docs/concepts/overview).
+microservices orchestration, scheduled jobs ⏰, and more with ease. Learn more on our [🌍 main website](https://unmeshed.io) or explore the
+ [📖 documentation overview (https://unmeshed.io/docs/concepts/overview).
 
 Unmeshed is built by the ex-founders of Netflix Conductor. This next-gen platform is blazing fast and covers many more
 use cases.
 
 ---
+
+## ✅ Prerequisites
+
+Before proceeding, ensure that you have:
+
+- Node.js installed (v18+ recommended)
+- Access to an Unmeshed server instance
+- A valid `authToken` and `clientId`
+- Install the Unmeshed SDK:
 
 ## Installing the Unmeshed SDK
 
@@ -41,13 +49,13 @@ To initialize the `UnmeshedClient` with your credentials, use the following code
 with your actual credentials:
 
 ```typescript
-import {UnmeshedClient} from '@unmeshed/sdk';
+import { UnmeshedClient } from "@unmeshed/sdk";
 
 const unmeshedClient = new UnmeshedClient({
-    baseUrl: 'http://localhost', // Replace with your Unmeshed API endpoint 🌐
-    port: 8080,                 // Replace with your Unmeshed API port 🚪
-    authToken: 'your-auth-token', // Replace with your API 🔒 auth token
-    clientId: 'your-client-id'    // Replace with your API 🆔 client ID
+  baseUrl: "http://localhost", // Replace with your Unmeshed API endpoint 🌐
+  port: 8080, // Replace with your Unmeshed API port 🚪
+  authToken: "your-auth-token", // Replace with your API 🔒 auth token
+  clientId: "your-client-id", // Replace with your API 🆔 client ID
 });
 ```
 
@@ -56,10 +64,41 @@ const unmeshedClient = new UnmeshedClient({
 
 ---
 
+## Creating a Process Definition using the Unmeshed SDK
+
+This guide explains how to create a simple **Process Definition** within the Unmeshed platform using the official `@unmeshed/sdk`.
+
+A Process Definition is the blueprint of an orchestrated workflow. It contains metadata such as the process name, namespace, version, and a list of steps to be executed.
+
+### Create a Worker Step
+
+Each process consists of steps. In this example, we define a single WORKER step:
+
+```typescript
+{
+    type: StepType.WORKER,
+    name: "worker",
+    namespace: "default",
+    ref: "worker_1",
+    optional: false,
+    createdBy: "system",
+    updatedBy: "system",
+    created: Date.now(),
+    updated: Date.now(),
+    children: [],
+    input: {},
+    configuration: {
+        rateLimitMaxRequests: null,
+        rateLimitWindowSeconds: null,
+    },
+},
+```
+
+---
+
 ## Running a Worker
 
-A worker in Unmeshed processes 🌀 tasks asynchronously based on workflows or process definitions. Below is an example of
-defining and starting a worker:
+A worker in Unmeshed processes 🌀 tasks asynchronously based on workflows or process definitions. Below is an example of defining and starting a worker:
 
 ### Step 1: Define a Worker Function
 
@@ -67,13 +106,13 @@ A worker function processes incoming tasks and returns an output:
 
 ```typescript
 let workerFunction = (input: any): Promise<any> => {
-    return new Promise((resolve) => {
-        const output = {
-            ...input || {},
-            "ranAt": new Date() // Add the current timestamp to the output 🕒
-        };
-        resolve(output);
-    });
+  return new Promise((resolve) => {
+    const output = {
+      ...(input || {}),
+      ranAt: new Date(), // Add the current timestamp to the output 🕒
+    };
+    resolve(output);
+  });
 };
 ```
 
@@ -83,10 +122,10 @@ Define the worker configuration and register it with the `UnmeshedClient`:
 
 ```typescript
 const worker = {
-    worker: workerFunction,
-    namespace: 'default', // Namespace for the worker 🗂️
-    name: 'test-node-worker', // Unique name for the worker 🏷️
-    maxInProgress: 500 // Maximum number of in-progress tasks ⏳
+  worker: workerFunction,
+  namespace: "default", // Namespace for the worker 🗂️
+  name: "test-node-worker", // Unique name for the worker 🏷️
+  maxInProgress: 500, // Maximum number of in-progress tasks ⏳
 };
 
 unmeshedClient.startPolling([worker]);
@@ -105,19 +144,20 @@ When you run your TypeScript app, the worker will automatically start polling fo
 ### Start a Process / Workflow - Synchronously
 
 ```typescript
-import {ProcessRequestData} from '@unmeshed/sdk';
+import { ProcessRequestData } from "@unmeshed/sdk";
 
 const request: ProcessRequestData = {
-    namespace: `default`,
-    name: `testing`,
-    version: null, // null = latest, specify a version if required
-    requestId: `my-id-1`, // Your id (Optional)
-    correlationId: `my-crid-1`, // Your correlation id (Optional)
-    input: {  // Inputs to your process
-        "mykey": "value",
-        "mykeyNumber": 100,
-        "mykeyBoolean": true
-    }
+  namespace: `default`,
+  name: `testing`,
+  version: null, // null = latest, specify a version if required
+  requestId: `my-id-1`, // Your id (Optional)
+  correlationId: `my-crid-1`, // Your correlation id (Optional)
+  input: {
+    // Inputs to your process
+    mykey: "value",
+    mykeyNumber: 100,
+    mykeyBoolean: true,
+  },
 };
 
 const processData = await unmeshedClient.runProcessSync(request);
@@ -130,7 +170,10 @@ console.log("Output: ", processData);
 const pd = await unmeshedClient.getProcessData(processData.processId, true);
 console.log("Output of process including steps ", pd);
 
-const pdWithoutSteps = await unmeshedClient.getProcessData(processData.processId, false);
+const pdWithoutSteps = await unmeshedClient.getProcessData(
+  processData.processId,
+  false
+);
 console.log("Output of process without steps ", pdWithoutSteps);
 ```
 
@@ -146,7 +189,10 @@ console.log("Output of the first step in process ", stepData);
 ```typescript
 const processIds = [1, 2, 3];
 const reason = "Terminating due to policy changes";
-const bulkTerminateOutput = await unmeshedClient.bulkTerminate(processIds, reason);
+const bulkTerminateOutput = await unmeshedClient.bulkTerminate(
+  processIds,
+  reason
+);
 
 console.log("Output of the bulk terminate action ", bulkTerminateOutput);
 ```
@@ -161,7 +207,10 @@ console.log("Output of the bulk resume action ", bulkResumeOutput);
 ### Mark Processes as Reviewed
 
 ```typescript
-const bulkReviewedOutput = await unmeshedClient.bulkReviewed(processIds, reason);
+const bulkReviewedOutput = await unmeshedClient.bulkReviewed(
+  processIds,
+  reason
+);
 console.log("Output of the bulk review action ", bulkReviewedOutput);
 ```
 
@@ -172,10 +221,9 @@ const rerun = await unmeshedClient.reRun(processData.processId);
 console.log("Output of the rerun action ", rerun);
 ```
 
-### Search a     Process
+### Search a Process
 
 ```typescript
-
 const searchParams = {
   startTimeEpoch: 1737091430310, // Start time in epoch milliseconds
   endTimeEpoch: 0, // End time in epoch milliseconds (0 indicates no end time, Optional)
@@ -193,7 +241,6 @@ const searchParams = {
 
 const response = await unmeshedClient.searchProcessExecution(searchParams);
 console.log(response);
-
 ```
 
 ---
@@ -210,10 +257,10 @@ console.log(response);
 - **[📖 Workers Documentation](https://unmeshed.io/docs/concepts/workers):** Learn more about workers and how to use them
   effectively.
 - **Use Case Highlights:**
-    - [🌐 API Orchestration](https://unmeshed.io/docs/use-cases/api-orchestration)
-    - [🧩 Microservices Orchestration](https://unmeshed.io/docs/use-cases/microservices-orchestration)
-    - [⏰ Scheduled Jobs](https://unmeshed.io/docs/use-cases/scheduled-jobs)
+  - [🌐 API Orchestration](https://unmeshed.io/docs/use-cases/api-orchestration)
+  - [🧩 Microservices Orchestration](https://unmeshed.io/docs/use-cases/microservices-orchestration)
+  - [⏰ Scheduled Jobs](https://unmeshed.io/docs/use-cases/scheduled-jobs)
 
 For more details, visit our [📖 documentation](https://unmeshed.io/docs/concepts/overview). If you encounter issues, feel
 free to reach out or open an issue in this repository!
-
+ 
